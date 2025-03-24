@@ -1,0 +1,38 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Cursor Rules for Godot Game Development
+
+1. Prefer GDScript for Rapid Development
+Rule: Use GDScript as the primary language for game logic unless performance demands otherwise. Its tight integration with Godot’s node system and straightforward syntax enable fast iteration and prototyping.
+Details: Reserve C# or GDNative for performance-critical sections (e.g., physics simulations or complex algorithms). Always profile with Godot’s built-in tools before switching languages to justify the change.
+
+2. Ensure Modularity to Avoid Monoliths
+Rule: Split game logic into multiple, focused scripts rather than a single, giant file. Each script should have a clear, single responsibility (e.g., one for player input, another for enemy behavior).
+Details: Attach scripts to specific nodes or scenes and use signals for communication between them. This prevents a monolithic codebase, improves readability, and simplifies debugging and collaboration in teams.
+
+3. Maximize the Scene System
+Rule: Build the game using nested scenes (e.g., a player scene, a HUD scene, and a level scene) to create reusable, modular components.
+Details: Ensure each scene is self-contained and can be tested independently. This approach leverages Godot’s scene system for organization and scalability, making it easier to manage large projects.
+
+4. Optimize for Mobile Devices
+Rule: Prioritize mobile-friendly optimizations, especially for games like "Dot" targeting mobile platforms.
+Details:
+Use sprite atlases to batch textures and reduce draw calls.
+Limit transparent textures and heavy shaders to maintain frame rates.
+Implement object pooling for frequently spawned objects (e.g., projectiles or particles).
+Test on actual devices regularly to catch performance issues early.
+
+5. Design Responsive UI with Control Nodes
+Rule: Use Godot’s Control nodes (e.g., VBoxContainer, HBoxContainer) to create UI layouts that adapt to various screen sizes.
+Details: Keep UI logic in separate scripts from core gameplay code. Use Tween nodes for smooth animations (e.g., fading menus or scaling buttons) to enhance the player experience without sacrificing performance.
+
+6. Handle Networking Efficiently (When Needed)
+Rule: For multiplayer or online features, use Godot’s High-Level Multiplayer API and RPCs (Remote Procedure Calls) to manage networked gameplay.
+Details: Design with offline playability in mind, gracefully handling network errors. Test synchronization frequently to ensure consistency across clients, and keep network code modular for easy updates or removal.
+
+- You can @ files here
+- You can use markdown but dont have to
