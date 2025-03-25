@@ -37,7 +37,7 @@ func run_tests() -> void:
 
 	# Test 5: Level Map Button States
 	print("\nTest 5: Level Map Button States")
-	var level_map = preload("res://level_map.tscn").instantiate()
+	var level_map = preload("res://scenes/level_map.tscn").instantiate()
 	add_child(level_map)
 	
 	# Wait for _ready to complete
@@ -51,7 +51,7 @@ func run_tests() -> void:
 
 	# Test 6: Level Completion Signal
 	print("\nTest 6: Level Completion Signal")
-	var game_grid = preload("res://game_grid.tscn").instantiate()
+	var game_grid = preload("res://scenes/game_grid.tscn").instantiate()
 	add_child(game_grid)
 	
 	# Connect to signal

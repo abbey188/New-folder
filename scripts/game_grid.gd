@@ -577,8 +577,8 @@ func visual_effects():
 	# This function should return the reference to the visual effects manager
 	return $VisualEffects  # Placeholder return, actual implementation needed
 
-func level_number():
-	# Implementation of level_number function
+func get_level_number():
+	# Implementation of get_level_number function
 	# This function should return the current level number
 	return 1  # Placeholder return, actual implementation needed
 
