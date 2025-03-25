@@ -1,0 +1,26 @@
+{
+    "level_id": 1,
+    "name": "First Steps",
+    "grid_size": {
+        "rows": 6,
+        "columns": 6
+    },
+    "available_colors": ["red", "blue", "green", "yellow", "purple"],
+    "initial_board_state": null,
+    "objectives": [
+        {
+            "type": "color",
+            "target_color": "red",
+            "amount": 10
+        }
+    ],
+    "move_limit": 16,
+    "score_targets": {
+        "one_star": 0,
+        "two_stars": 4,
+        "three_stars": 5
+    },
+    "background_theme": "default",
+    "music_track": "level_1",
+    "next_level_id": 2
+} 

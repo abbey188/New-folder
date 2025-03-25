@@ -153,7 +153,40 @@
 - **Test Results:** Star rating system correctly awards 1-3 stars based on remaining moves with appropriate animations
 - **Status:** ✓ Complete
 
+## Step 11: Create a Basic Level Map (Completed)
+- Date: [Current Date]
+- Created a level map scene with:
+  - Three level buttons (1, 2, and 3)
+  - Level 1 unlocked, others locked
+  - Proper font sizes and styling:
+    - Level numbers: 24pt
+    - Buttons: 400x80 pixels
+    - Consistent spacing (40px between buttons)
+- Implemented level selection functionality:
+  - Level 1 button transitions to game grid
+  - Locked levels are visually disabled
+- Added game UI improvements:
+  - Created a clean top bar layout for game information
+  - Added moves counter, score display, and objective tracking
+  - Implemented level completion popup with:
+    - Success/failure status messages
+    - Final score display
+    - Star rating visualization (1-3 stars)
+    - Continue button functionality
+- Created proper scene hierarchy:
+  - Main game UI as CanvasLayer
+  - Organized UI elements in control nodes
+  - Modular level completion popup scene
+- **Test Results:** 
+  - Level map displays correctly with proper button states
+  - Level 1 loads game grid when selected
+  - Game UI elements update during gameplay
+  - Level completion popup shows correctly with appropriate star rating
+  - All UI elements use specified font sizes and styling
+- **Status:** ✓ Complete
+
 ## Next Steps
-- Proceed to Step 11: Create a Basic Level Map
-- Consider implementing level progression mechanics
+- Proceed to Step 12: Link Levels to Gameplay
+- Implement level-specific data loading
+- Add proper level progression system
 
