@@ -49,6 +49,10 @@ var game_ui = null  # Reference to the UI layer
 # Audio manager reference
 var audio_manager = null
 
+# Achievement variables
+var level_number = 1  # Assuming a default level number
+var objective_progress = 0  # Assuming a default objective progress
+
 func _ready():
 	# Seed the random number generator
 	randomize()
@@ -520,3 +524,65 @@ func toggle_dot_selection(dot):
 	# Otherwise, select it
 	else:
 		select_dot(dot) 
+
+func handle_level_completion():
+	var stars = calculate_stars()
+	
+	# Show completion popup
+	completion_popup.show()
+	completion_popup.set_stars(stars)
+	
+	# Create celebratory effect
+	var particles = visual_effects.create_level_complete_effect(self)
+	add_child(particles)
+	
+	# Save progress
+	SaveManager.get_instance().set_level_stars(level_number, stars)
+	
+	# Unlock next level
+	var next_level = level_number + 1
+	if next_level <= 3:  # Assuming we have 3 levels
+		SaveManager.get_instance().unlock_level(next_level)
+	
+	# Check for achievements
+	check_level_completion_achievements(stars)
+
+func check_level_completion_achievements(stars: int) -> void:
+	var achievement_manager = AchievementManager.get_instance()
+	
+	# Check for first victory achievement
+	if level_number == 1:
+		achievement_manager.check_achievement("first_victory")
+	
+	# Check for perfect level achievement
+	if stars == 3:
+		achievement_manager.check_achievement("perfect_level")
+	
+	# Check for color master achievement
+	if objective_progress >= 50:
+		achievement_manager.check_achievement("color_master")
+
+func calculate_stars():
+	# Implementation of calculate_stars function
+	# This function should return the calculated number of stars based on the game's logic
+	return 3  # Placeholder return, actual implementation needed
+
+func completion_popup():
+	# Implementation of completion_popup function
+	# This function should return the reference to the completion popup
+	return $CompletionPopup  # Placeholder return, actual implementation needed
+
+func visual_effects():
+	# Implementation of visual_effects function
+	# This function should return the reference to the visual effects manager
+	return $VisualEffects  # Placeholder return, actual implementation needed
+
+func level_number():
+	# Implementation of level_number function
+	# This function should return the current level number
+	return 1  # Placeholder return, actual implementation needed
+
+func objective_progress():
+	# Implementation of objective_progress function
+	# This function should return the current objective progress
+	return 50  # Placeholder return, actual implementation needed 
