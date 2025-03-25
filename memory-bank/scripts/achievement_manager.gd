@@ -4,9 +4,14 @@ signal achievement_unlocked(achievement: Achievement)
 
 var achievements: Array[Achievement] = []
 var save_path: String = "user://achievements.tres"
+var popup_scene: PackedScene
+var popup_instance: Control
 
 func _ready():
 	load_achievements()
+	popup_scene = preload("res://scenes/achievement_popup.tscn")
+	popup_instance = popup_scene.instantiate()
+	add_child(popup_instance)
 
 func load_achievements():
 	if FileAccess.file_exists(save_path):
@@ -58,8 +63,13 @@ func unlock_achievement(achievement_id: String):
 			achievement.unlock()
 			achievement_unlocked.emit(achievement)
 			save_achievements()
+			show_achievement_popup(achievement)
 			return true
 	return false
+
+func show_achievement_popup(achievement: Achievement):
+	if popup_instance:
+		popup_instance.show_achievement(achievement)
 
 func get_achievement(achievement_id: String) -> Achievement:
 	for achievement in achievements:
