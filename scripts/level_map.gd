@@ -1,16 +1,35 @@
 extends Control
 
-@onready var level_1_button = $LevelsContainer/Level1
-@onready var level_2_button = $LevelsContainer/Level2
-@onready var level_3_button = $LevelsContainer/Level3
-@onready var back_button = $BackButton
+@onready var level_1_button = $SafeArea/VBoxContainer/LevelsContainer/Level1
+@onready var level_2_button = $SafeArea/VBoxContainer/LevelsContainer/Level2
+@onready var level_3_button = $SafeArea/VBoxContainer/LevelsContainer/Level3
+@onready var back_button = $SafeArea/VBoxContainer/BackButton
+@onready var safe_area = $SafeArea
 
 func _ready():
+	# Apply safe area margins based on device
+	var ui_scaling = get_node("/root/UIScaling")
+	if ui_scaling and safe_area:
+		var margins = Vector4(
+			ui_scaling.left_margin,
+			ui_scaling.top_margin,
+			ui_scaling.right_margin,
+			ui_scaling.bottom_margin
+		)
+		
+		safe_area.add_theme_constant_override("margin_left", margins.x)
+		safe_area.add_theme_constant_override("margin_top", margins.y)
+		safe_area.add_theme_constant_override("margin_right", margins.z)
+		safe_area.add_theme_constant_override("margin_bottom", margins.w)
+		
 	# Connect button signals
 	level_1_button.pressed.connect(_on_level_1_button_pressed)
 	level_2_button.pressed.connect(_on_level_2_button_pressed)
 	level_3_button.pressed.connect(_on_level_3_button_pressed)
 	back_button.pressed.connect(_on_back_button_pressed)
+	
+	# Connect to viewport size changes
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
 	
 	# Start game music
 	var audio_manager = get_node("/root/AudioManager")
@@ -19,6 +38,24 @@ func _ready():
 	
 	# Update button states based on level progress
 	update_level_states()
+
+func _on_viewport_size_changed():
+	# Re-apply the safe area margins
+	if get_node_or_null("/root/UIScaling") and safe_area:
+		var ui_scaling = get_node("/root/UIScaling")
+		
+		# Recalculate because UIScaling would have updated its values
+		var margins = Vector4(
+			ui_scaling.left_margin,
+			ui_scaling.top_margin,
+			ui_scaling.right_margin,
+			ui_scaling.bottom_margin
+		)
+		
+		safe_area.add_theme_constant_override("margin_left", margins.x)
+		safe_area.add_theme_constant_override("margin_top", margins.y)
+		safe_area.add_theme_constant_override("margin_right", margins.z)
+		safe_area.add_theme_constant_override("margin_bottom", margins.w)
 
 func update_level_states():
 	# Load level progress

@@ -76,6 +76,8 @@ func _ready():
 	if game_ui:
 		game_ui.no_moves_left.connect(_on_no_moves_left)
 		game_ui.objective_completed.connect(_on_objective_completed)
+		game_ui.restart_requested.connect(_on_restart_requested)
+		game_ui.home_requested.connect(_on_home_requested)
 
 func _on_no_moves_left():
 	# Handle game over state
@@ -93,6 +95,28 @@ func _on_objective_completed():
 	print("Level Complete: Objective achieved!")
 	# Processing will be handled by the UI now
 	is_processing = true  # Prevent further input
+
+func _on_restart_requested():
+	# Reset the game when restart button is pressed
+	print("Restart requested")
+	
+	# Play button click sound
+	if audio_manager:
+		audio_manager.play_button_click()
+	
+	# Reset the game
+	reset_game()
+
+func _on_home_requested():
+	# Return to level map when home button is pressed
+	print("Home requested")
+	
+	# Play button click sound
+	if audio_manager:
+		audio_manager.play_button_click()
+	
+	# Change to level map scene
+	get_tree().change_scene_to_file("res://scenes/level_map.tscn")
 
 func reset_game():
 	# Clear the grid

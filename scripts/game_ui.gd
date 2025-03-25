@@ -2,6 +2,8 @@ extends CanvasLayer
 
 signal no_moves_left
 signal objective_completed
+signal restart_requested
+signal home_requested
 
 # Game state variables
 var moves_left = 16
@@ -18,11 +20,14 @@ var level_complete = false
 var level_failed = false
 
 # UI nodes
-@onready var moves_label = $UI/TopBar/MovesLabel
-@onready var score_label = $UI/TopBar/ScoreLabel
-@onready var objective_label = $UI/TopBar/ObjectiveLabel
-@onready var progress_label = $UI/TopBar/ProgressLabel
+@onready var moves_label = $UI/SafeArea/VBoxContainer/TopBar/HBoxContainer/MovesContainer/MovesLabel
+@onready var score_label = $UI/SafeArea/VBoxContainer/TopBar/HBoxContainer/ScoreContainer/ScoreLabel
+@onready var objective_label = $UI/SafeArea/VBoxContainer/TopBar/HBoxContainer/ObjectiveContainer/ObjectiveLabel
+@onready var progress_label = $UI/SafeArea/VBoxContainer/TopBar/HBoxContainer/ObjectiveContainer/ProgressLabel
+@onready var restart_button = $UI/SafeArea/VBoxContainer/BottomBar/HBoxContainer/RestartButton
+@onready var home_button = $UI/SafeArea/VBoxContainer/BottomBar/HBoxContainer/HomeButton
 @onready var level_completion_popup = $LevelCompletionPopup
+@onready var safe_area = $UI/SafeArea
 
 # Constants
 const SQUARE_MULTIPLIER = 0.5
@@ -34,20 +39,63 @@ const LEVEL_COMPLETION_SCORE = 60  # Base points for completing a level
 const COLOR_NAMES = ["red", "blue", "green", "yellow", "purple"]
 
 func _ready():
+	# Apply safe area margins based on device
+	var ui_scaling = get_node("/root/UIScaling")
+	if ui_scaling and safe_area:
+		var margins = Vector4(
+			ui_scaling.left_margin,
+			ui_scaling.top_margin,
+			ui_scaling.right_margin,
+			ui_scaling.bottom_margin
+		)
+		
+		safe_area.add_theme_constant_override("margin_left", margins.x)
+		safe_area.add_theme_constant_override("margin_top", margins.y)
+		safe_area.add_theme_constant_override("margin_right", margins.z)
+		safe_area.add_theme_constant_override("margin_bottom", margins.w)
+	
 	# Initialize UI elements
 	update_ui()
+	
+	# Connect signals for buttons
+	if restart_button:
+		restart_button.pressed.connect(_on_restart_button_pressed)
+	
+	if home_button:
+		home_button.pressed.connect(_on_home_button_pressed)
 	
 	# Connect signals for level completion popup
 	if level_completion_popup:
 		level_completion_popup.continue_pressed.connect(_on_continue_pressed)
 		level_completion_popup.visible = false
 	
-	# Print debug info to verify nodes are found
+	# Connect to viewport size changes
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
+	
 	print("UI initialized - Moves Label: ", moves_label != null)
 	print("UI initialized - Score Label: ", score_label != null)
 	print("UI initialized - Objective Label: ", objective_label != null)
 	print("UI initialized - Progress Label: ", progress_label != null)
 	print("UI initialized - Level Completion Popup: ", level_completion_popup != null)
+
+# Handle viewport size changes
+func _on_viewport_size_changed():
+	# Re-apply the safe area margins
+	if get_node_or_null("/root/UIScaling") and safe_area:
+		var ui_scaling = get_node("/root/UIScaling")
+		
+		# Recalculate because UIScaling would have updated its values
+		var margins = Vector4(
+			ui_scaling.left_margin,
+			ui_scaling.top_margin,
+			ui_scaling.right_margin,
+			ui_scaling.bottom_margin
+		)
+		
+		safe_area.add_theme_constant_override("margin_left", margins.x)
+		safe_area.add_theme_constant_override("margin_top", margins.y)
+		safe_area.add_theme_constant_override("margin_right", margins.z)
+		safe_area.add_theme_constant_override("margin_bottom", margins.w)
 
 # Update the UI elements
 func update_ui():
@@ -131,9 +179,16 @@ func _show_level_failed():
 
 # Handle continue button press on completion popup
 func _on_continue_pressed():
-	# Here you would typically return to the level map
-	# For now, we'll just reset the game
-	reset_game()
+	# Return to the level map
+	emit_signal("home_requested")
+
+# Handle restart button press
+func _on_restart_button_pressed():
+	emit_signal("restart_requested")
+
+# Handle home button press
+func _on_home_button_pressed():
+	emit_signal("home_requested")
 
 # Reset the game state
 func reset_game():
