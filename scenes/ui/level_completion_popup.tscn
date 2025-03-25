@@ -1,0 +1,113 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/level_completion_popup.gd" id="1_f0ggj"]
+[ext_resource type="Script" path="res://scripts/star_icon.gd" id="2_ckl2b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vnk4l"]
+bg_color = Color(0.129412, 0.129412, 0.188235, 0.901961)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0vja4"]
+bg_color = Color(0.211765, 0.556863, 0.956863, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="LevelCompletionPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_f0ggj")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vnk4l")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -180.0
+offset_right = 260.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "LEVEL COMPLETE"
+horizontal_alignment = 1
+
+[node name="ScoreContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="VBoxContainer/ScoreContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "SCORE:"
+
+[node name="ScoreValue" type="Label" parent="VBoxContainer/ScoreContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "0"
+
+[node name="StarsContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Star1" type="Control" parent="VBoxContainer/StarsContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+script = ExtResource("2_ckl2b")
+fill_color = Color(1, 0.9, 0.1, 1)
+outline_color = Color(0.9, 0.5, 0, 1)
+
+[node name="Star2" type="Control" parent="VBoxContainer/StarsContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+script = ExtResource("2_ckl2b")
+fill_color = Color(1, 0.9, 0.1, 1)
+outline_color = Color(0.9, 0.5, 0, 1)
+
+[node name="Star3" type="Control" parent="VBoxContainer/StarsContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+script = ExtResource("2_ckl2b")
+fill_color = Color(1, 0.9, 0.1, 1)
+outline_color = Color(0.9, 0.5, 0, 1)
+
+[node name="ContinueButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_0vja4")
+theme_override_font_sizes/font_size = 24
+text = "CONTINUE" 

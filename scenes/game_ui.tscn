@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://bq7a5xtl8ptfa"]
+[gd_scene load_steps=4 format=3 uid="uid://bq7a5xtl8ptfa"]
 
 [ext_resource type="Script" path="res://scripts/game_ui.gd" id="1_bv2vn"]
+[ext_resource type="PackedScene" path="res://scenes/ui/level_completion_popup.tscn" id="2_rircc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k8j5t"]
 bg_color = Color(0.2, 0.2, 0.2, 0.8)
@@ -96,4 +97,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "0/10"
-horizontal_alignment = 1 
+horizontal_alignment = 1
+
+[node name="LevelCompletionPopup" parent="." instance=ExtResource("2_rircc")]
+visible = false 

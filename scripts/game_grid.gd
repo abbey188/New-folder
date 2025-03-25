@@ -62,16 +62,22 @@ func _ready():
 	# Get reference to UI
 	game_ui = get_node("/root/Main/GameUI")
 	
-	# Connect signal for game over
+	# Connect signals for game state
 	if game_ui:
 		game_ui.no_moves_left.connect(_on_no_moves_left)
+		game_ui.objective_completed.connect(_on_objective_completed)
 
 func _on_no_moves_left():
-	# Handle game over state - will be implemented in future steps
+	# Handle game over state
 	print("Game Over: No moves left!")
-	# For now, we'll just restart the game
-	await get_tree().create_timer(1.0).timeout
-	reset_game()
+	# Processing will be handled by the UI now
+	is_processing = true  # Prevent further input
+
+func _on_objective_completed():
+	# Handle level completion
+	print("Level Complete: Objective achieved!")
+	# Processing will be handled by the UI now
+	is_processing = true  # Prevent further input
 
 func reset_game():
 	# Clear the grid
@@ -88,6 +94,9 @@ func reset_game():
 	# Reset UI
 	if game_ui:
 		game_ui.reset_game()
+	
+	# Re-enable input
+	is_processing = false
 
 func setup_connection_line():
 	# Add the Line2D node for connections

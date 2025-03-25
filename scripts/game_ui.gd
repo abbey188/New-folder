@@ -13,16 +13,22 @@ var objective_color = 0 # color index from GameGrid.DOT_COLORS
 var objective_count = 10 # number of dots to clear
 var current_progress = 0 # current progress towards objective
 
+# Level completion variables
+var level_complete = false
+var level_failed = false
+
 # UI nodes
 @onready var moves_label = $MovesContainer/VBoxContainer/MovesLabel
 @onready var score_label = $ScoreContainer/VBoxContainer/ScoreLabel
 @onready var objective_label = $ObjectiveContainer/VBoxContainer/ObjectiveLabel
 @onready var progress_label = $ObjectiveContainer/VBoxContainer/ProgressLabel
+@onready var level_completion_popup = $LevelCompletionPopup
 
 # Constants
 const SQUARE_MULTIPLIER = 0.5
 const LARGE_CHAIN_MULTIPLIER = 0.5
 const LARGE_CHAIN_THRESHOLD = 10
+const LEVEL_COMPLETION_SCORE = 60  # Base points for completing a level
 
 # Color names for objective display
 const COLOR_NAMES = ["red", "blue", "green", "yellow", "purple"]
@@ -33,11 +39,17 @@ func _ready():
 	update_score_display()
 	update_objective_display()
 	
+	# Connect signals for level completion popup
+	if level_completion_popup:
+		level_completion_popup.continue_pressed.connect(_on_continue_pressed)
+		level_completion_popup.visible = false
+	
 	# Print debug info to verify nodes are found
 	print("UI initialized - Moves Label: ", moves_label != null)
 	print("UI initialized - Score Label: ", score_label != null)
 	print("UI initialized - Objective Label: ", objective_label != null)
 	print("UI initialized - Progress Label: ", progress_label != null)
+	print("UI initialized - Level Completion Popup: ", level_completion_popup != null)
 
 # Update the moves display
 func update_moves_display():
@@ -70,7 +82,9 @@ func use_move():
 	update_moves_display()
 	
 	# Check if player has no moves left
-	if moves_left <= 0:
+	if moves_left <= 0 and !level_complete:
+		level_failed = true
+		_show_level_failed()
 		emit_signal("no_moves_left")
 
 # Add to the score based on dots cleared
@@ -117,14 +131,41 @@ func track_cleared_dots(dots_array, dot_colors):
 	update_objective_display()
 	
 	# Check if objective is completed
-	if current_progress >= objective_count:
+	if current_progress >= objective_count and !level_complete and !level_failed:
+		level_complete = true
+		_show_level_complete()
 		emit_signal("objective_completed")
+
+# Show level complete screen
+func _show_level_complete():
+	# Add completion bonus to the score
+	var final_score = current_score + LEVEL_COMPLETION_SCORE
+	current_score = final_score
+	update_score_display()
+	
+	# Show the completion popup with success
+	if level_completion_popup:
+		level_completion_popup.show_completion(true, final_score, moves_left)
+
+# Show level failed screen
+func _show_level_failed():
+	# Show the completion popup with failure
+	if level_completion_popup:
+		level_completion_popup.show_completion(false, current_score, 0)
+
+# Handle continue button press on completion popup
+func _on_continue_pressed():
+	# Here you would typically return to the level map
+	# For now, we'll just reset the game
+	reset_game()
 
 # Reset the game state
 func reset_game():
 	moves_left = 16
 	current_score = 0
 	current_progress = 0
+	level_complete = false
+	level_failed = false
 	update_moves_display()
 	update_score_display()
 	update_objective_display()
