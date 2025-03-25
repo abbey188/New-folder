@@ -46,6 +46,9 @@ var last_selected_dot = null  # Last dot that was selected
 var is_processing = false  # Flag to prevent input during animations
 var game_ui = null  # Reference to the UI layer
 
+# Audio manager reference
+var audio_manager = null
+
 func _ready():
 	# Seed the random number generator
 	randomize()
@@ -62,6 +65,9 @@ func _ready():
 	# Get reference to UI
 	game_ui = $GameUI
 	
+	# Get reference to audio manager
+	audio_manager = get_node("/root/AudioManager")
+	
 	# Connect signals for game state
 	if game_ui:
 		game_ui.no_moves_left.connect(_on_no_moves_left)
@@ -70,6 +76,11 @@ func _ready():
 func _on_no_moves_left():
 	# Handle game over state
 	print("Game Over: No moves left!")
+	
+	# Play level fail sound
+	if audio_manager:
+		audio_manager.play_level_fail()
+	
 	# Processing will be handled by the UI now
 	is_processing = true  # Prevent further input
 
@@ -273,20 +284,24 @@ func is_square_shape(dots):
 
 # Select a dot (first dot in a chain)
 func select_dot(dot):
-	dot.scale = Vector2(SELECTION_SCALE, SELECTION_SCALE)  # Increase size by 10%
-	dot.modulate = GLOW_COLOR  # Add glow effect
-	dot.set_meta("selected", true)
-	
-	# Add to connected dots list
-	connected_dots.append(dot)
-	last_selected_dot = dot
-	
-	# Set the connection line color to match the dot color
-	connection_line.default_color = dot.get_meta("color").lerp(Color.WHITE, 0.2)
-	connection_line.visible = true
-	
-	# Start the line at this dot's position
-	update_connection_line()
+	# Only select if not already selected
+	if not dot.get_meta("selected"):
+		# Add to connected dots
+		connected_dots.append(dot)
+		
+		# Mark as selected
+		dot.set_meta("selected", true)
+		
+		# Visual feedback
+		dot.scale = Vector2(SELECTION_SCALE, SELECTION_SCALE)
+		dot.modulate = GLOW_COLOR
+		
+		# Update connection line
+		update_connection_line()
+		
+		# Play dot selection sound
+		if audio_manager:
+			audio_manager.play_dot_connect()
 
 # Try to connect a dot to the current chain
 func try_connect_dot(dot):
@@ -365,77 +380,34 @@ func reset_selections():
 
 # Clear the connected dots (when there are 3+ in a chain)
 func clear_connected_dots():
-	# Don't proceed if we're already processing or not enough dots
-	if is_processing or connected_dots.size() < MIN_DOTS_TO_CLEAR:
-		return
+	# Play level completion sound if objective is met
+	if game_ui and game_ui.is_objective_completed():
+		if audio_manager:
+			audio_manager.play_level_complete()
 	
-	# Set processing flag
-	is_processing = true
-	
-	# Store the number of dots being cleared for scoring
-	var dots_cleared = connected_dots.size()
-	
-	# Check if the connected dots form a square for bonus points
-	var is_square = is_square_shape(connected_dots)
-	
-	# Create a tween for fade-out animation
+	# Create a tween for the fade-out animation
 	var tween = create_tween()
 	
-	# Fade out each connected dot
+	# Animate each connected dot
 	for dot in connected_dots:
-		# Set up the fade animation
-		tween.parallel().tween_property(dot, "modulate", Color(1, 1, 1, 0), FADE_OUT_DURATION)
-		tween.parallel().tween_property(dot, "scale", Vector2(1.5, 1.5), FADE_OUT_DURATION)
-	
-	# When the tween completes, remove the dots from the grid
-	await tween.finished
-	
-	# Collect information about cleared dots for objective tracking
-	var cleared_dots = []  # For tracking objectives
-	var dot_colors = []    # For tracking color indices
-	
-	# Remove dots from the grid
-	var empty_positions = []
-	for dot in connected_dots:
+		# Get grid position
 		var grid_pos = dot.get_meta("grid_pos")
-		var row = int(grid_pos.y)
-		var col = int(grid_pos.x)
 		
-		# Store color information for objective tracking
-		cleared_dots.append(dot)
-		dot_colors.append(dot.get_meta("color_idx"))
+		# Animate scale and opacity
+		tween.parallel().tween_property(dot, "scale", Vector2(1.2, 1.2), FADE_OUT_DURATION)
+		tween.parallel().tween_property(dot, "modulate:a", 0.0, FADE_OUT_DURATION)
 		
-		# Remove from scene
-		dot.queue_free()
-		
-		# Set grid position to null
-		grid[row][col] = null
-		
-		# Add to list of positions that need new dots
-		empty_positions.append(Vector2(col, row))
+		# Clear the grid position
+		grid[grid_pos.y][grid_pos.x] = null
 	
-	# Update score in the UI
-	if game_ui:
-		game_ui.add_score(dots_cleared, is_square)
-		# Track dots for objective progress
-		game_ui.track_cleared_dots(cleared_dots, dot_colors)
+	# Wait for animation to complete before refilling
+	tween.tween_callback(refill_grid)
 	
-	# Clear the connections list
-	connected_dots.clear()
-	last_selected_dot = null
-	
-	# Hide the connection line
-	connection_line.clear_points()
+	# Clear the connection line
 	connection_line.visible = false
 	
-	# Short delay before refilling
-	await get_tree().create_timer(REFILL_DELAY).timeout
-	
-	# Refill the grid
-	await refill_grid()
-	
-	# Reset processing flag
-	is_processing = false
+	# Reset connected dots array
+	connected_dots.clear()
 
 # Refill the grid with new dots
 func refill_grid():
