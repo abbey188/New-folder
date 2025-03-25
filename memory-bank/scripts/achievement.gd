@@ -10,8 +10,9 @@ class_name Achievement
 @export var max_progress: int = 0  # 0 means no progress tracking
 @export var current_progress: int = 0
 @export var progress_type: String = ""  # e.g., "dots_cleared", "time", "stars"
+@export var category: String = "general"  # e.g., "level", "skill", "collection"
 
-func _init(p_id: String = "", p_title: String = "", p_description: String = "", p_icon_path: String = "", p_max_progress: int = 0, p_progress_type: String = ""):
+func _init(p_id: String = "", p_title: String = "", p_description: String = "", p_icon_path: String = "", p_max_progress: int = 0, p_progress_type: String = "", p_category: String = "general"):
 	id = p_id
 	title = p_title
 	description = p_description
@@ -21,6 +22,7 @@ func _init(p_id: String = "", p_title: String = "", p_description: String = "", 
 	max_progress = p_max_progress
 	current_progress = 0
 	progress_type = p_progress_type
+	category = p_category
 
 func unlock():
 	if not is_unlocked:

@@ -462,9 +462,41 @@
   - Multiple achievements queue properly
 - **Status:** ✓ Complete
 
+## Step 22: Add Achievement Progress Tracking (Completed)
+- Date: [Current Date]
+- Added progress tracking to Achievement resource:
+  - Added max_progress and current_progress properties
+  - Added progress_type for different tracking types
+  - Implemented progress percentage calculation
+  - Added progress update method with auto-unlock
+- Updated AchievementManager:
+  - Added progress tracking to save/load system
+  - Implemented progress update method
+  - Added progress-based achievement initialization
+  - Added signal for progress updates
+- Modified achievement popup:
+  - Added progress bar and label
+  - Updated UI to show progress information
+  - Added conditional display based on achievement type
+- Updated gallery scene:
+  - Added progress visualization to achievement cards
+  - Implemented real-time progress updates
+  - Added progress bar and label to card template
+- Modified game grid:
+  - Updated achievement tracking for Color Master
+  - Added progress tracking for Chain Reaction
+  - Integrated with achievement manager's progress system
+- **Test Results:** 
+  - Progress tracking works correctly for all achievement types
+  - UI updates properly show progress
+  - Progress persists between game sessions
+  - Auto-unlock triggers when progress reaches maximum
+  - Real-time updates work in gallery view
+- **Status:** ✓ Complete
+
 ## Next Steps
-- Proceed to Step 22: Add Achievement Progress Tracking
-- Implement progress indicators for in-progress achievements
-- Add progress updates to achievement cards
-- Create progress-based achievement triggers
+- Proceed to Step 23: Add Achievement Categories
+- Implement achievement grouping by type
+- Add category-based filtering in gallery
+- Create category-specific UI elements
 

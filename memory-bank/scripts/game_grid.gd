@@ -148,18 +148,17 @@ func clear_connected_dots():
 	# Update objective progress
 	objective_progress += selected_dots.size()
 	
-	# Track color clear counts
+	# Track color clear counts and update achievements
+	var color = selected_dots[0].get_meta("color")
 	if not color_clear_counts.has(color):
 		color_clear_counts[color] = 0
 	color_clear_counts[color] += selected_dots.size()
 	
-	# Check for Chain Reaction achievement
-	if selected_dots.size() >= 10:
-		achievement_manager.unlock_achievement("chain_reaction")
+	# Update Color Master achievement progress
+	achievement_manager.update_achievement_progress("color_master", selected_dots.size())
 	
-	# Check for Color Master achievement
-	if color_clear_counts[color] >= 50:
-		achievement_manager.unlock_achievement("color_master")
+	# Update Chain Reaction achievement progress
+	achievement_manager.update_achievement_progress("chain_reaction", selected_dots.size())
 	
 	# Animate and remove dots with particle effects
 	for dot in selected_dots:
