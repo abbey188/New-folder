@@ -123,7 +123,8 @@ func create_dot():
 	var dot = Sprite2D.new()
 	
 	# Get a random color from the DOT_COLORS array
-	var random_color = DOT_COLORS[randi() % DOT_COLORS.size()]
+	var color_idx = randi() % DOT_COLORS.size()
+	var random_color = DOT_COLORS[color_idx]
 	
 	# Create a circle texture for the dot
 	var image = Image.create(DOT_DIAMETER, DOT_DIAMETER, false, Image.FORMAT_RGBA8)
@@ -145,6 +146,7 @@ func create_dot():
 	
 	# Store the dot's color for future game logic
 	dot.set_meta("color", random_color)
+	dot.set_meta("color_idx", color_idx)  # Store the color index
 	dot.set_meta("selected", false)
 	
 	return dot
@@ -354,7 +356,11 @@ func reset_selections():
 
 # Clear the connected dots (when there are 3+ in a chain)
 func clear_connected_dots():
-	# Set processing flag to prevent input during animations
+	# Don't proceed if we're already processing or not enough dots
+	if is_processing or connected_dots.size() < MIN_DOTS_TO_CLEAR:
+		return
+	
+	# Set processing flag
 	is_processing = true
 	
 	# Store the number of dots being cleared for scoring
@@ -375,12 +381,20 @@ func clear_connected_dots():
 	# When the tween completes, remove the dots from the grid
 	await tween.finished
 	
+	# Collect information about cleared dots for objective tracking
+	var cleared_dots = []  # For tracking objectives
+	var dot_colors = []    # For tracking color indices
+	
 	# Remove dots from the grid
 	var empty_positions = []
 	for dot in connected_dots:
 		var grid_pos = dot.get_meta("grid_pos")
 		var row = int(grid_pos.y)
 		var col = int(grid_pos.x)
+		
+		# Store color information for objective tracking
+		cleared_dots.append(dot)
+		dot_colors.append(dot.get_meta("color_idx"))
 		
 		# Remove from scene
 		dot.queue_free()
@@ -394,6 +408,8 @@ func clear_connected_dots():
 	# Update score in the UI
 	if game_ui:
 		game_ui.add_score(dots_cleared, is_square)
+		# Track dots for objective progress
+		game_ui.track_cleared_dots(cleared_dots, dot_colors)
 	
 	# Clear the connections list
 	connected_dots.clear()

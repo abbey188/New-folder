@@ -90,7 +90,7 @@ func test_ui_elements():
 		test_success = false
 		failure_messages.append("FAIL: Missing add_score method in GameUI")
 
-async func test_move_counter():
+func test_move_counter():
 	print("Testing move counter...")
 	# Make sure the game is reset
 	if grid_node.has_method("reset_game"):
@@ -127,7 +127,7 @@ async func test_move_counter():
 		test_success = false
 		failure_messages.append("FAIL: Move counter did not decrease by 1 after clearing dots")
 
-async func test_scoring_system():
+func test_scoring_system():
 	print("Testing scoring system...")
 	# Reset the game to start fresh
 	if grid_node.has_method("reset_game"):
@@ -165,7 +165,7 @@ async func test_scoring_system():
 		failure_messages.append("FAIL: Score did not increase after clearing dots")
 
 # Find dots that can be connected and clear them
-async func clear_some_dots():
+func clear_some_dots():
 	print("Finding connectable dots...")
 	try:
 		# Reset any existing connections

@@ -66,4 +66,34 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
 text = "0"
+horizontal_alignment = 1
+
+[node name="ObjectiveContainer" type="MarginContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 20.0
+offset_right = 150.0
+offset_bottom = 120.0
+grow_horizontal = 2
+
+[node name="Background" type="Panel" parent="ObjectiveContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_k8j5t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ObjectiveContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ObjectiveLabel" type="Label" parent="ObjectiveContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Clear 10 red dots"
+horizontal_alignment = 1
+
+[node name="ProgressLabel" type="Label" parent="ObjectiveContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "0/10"
 horizontal_alignment = 1 

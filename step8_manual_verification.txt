@@ -1,0 +1,47 @@
+# Step 8 Manual Verification Guide
+
+Use this guide to manually verify that the level objectives feature has been implemented correctly.
+
+## Step 1: Open the Project in Godot
+- Launch Godot Engine
+- Open your "Dot" project
+- Run the main scene
+
+## Step 2: Check the UI Elements
+Verify that:
+- There is an objective UI element at the top center of the screen
+- The objective text shows something like "Clear 10 red dots"
+- The progress counter shows "0/10" initially
+
+## Step 3: Test Objective Tracking
+1. Find and connect at least 3 dots of the color mentioned in the objective
+2. Verify that the progress counter increases when dots of the correct color are cleared
+   - For example, if clearing red dots, the counter might change from "0/10" to "1/10"
+3. Continue clearing dots of the target color
+4. Verify that clearing dots of other colors doesn't affect the progress counter
+
+## Step 4: Test Objective Completion
+1. Set a lower objective for testing (you can modify the code to set objective_count to 3)
+2. Clear enough dots to meet the objective
+3. Verify that the progress counter shows completion (e.g., "3/3")
+4. Check if the objective_completed signal is emitted (additional UI feedback would be implemented in Step 9)
+
+## Step 5: Test Resetting
+1. Reset the game (either through game logic or by restarting)
+2. Verify that the objective and progress counter reset properly
+
+## Common Issues
+If verification fails, check:
+1. The objective UI might be missing or positioned incorrectly
+2. Color tracking logic might not be working correctly in game_grid.gd
+3. The track_cleared_dots function in game_ui.gd might have issues
+4. The set_objective function might not update the display correctly
+
+## Test Pass Criteria
+The test passes if:
+- Objective text is clearly displayed
+- Progress tracking works for the target color
+- Progress counter updates correctly
+- Other game functionality continues to work alongside objectives
+
+If all checks pass, you can consider Step 8 complete and proceed to Step 9. 

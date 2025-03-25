@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://bxu3u1ytaasca"]
+
+[ext_resource type="Script" path="res://scripts/verify_step8.gd" id="1_t8r9k"]
+
+[node name="TestStep8" type="Node2D"]
+script = ExtResource("1_t8r9k")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 251.0
+offset_top = 598.0
+offset_right = 469.0
+offset_bottom = 660.0
+theme_override_font_sizes/font_size = 24
+text = "Running Step 8 
+Verification..."
+horizontal_alignment = 1 
