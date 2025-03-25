@@ -1,0 +1,61 @@
+# Step 7 Verification Script Fixes
+
+The verification script may be failing for several reasons. Here are the common issues and how to fix them:
+
+## Issue 1: Node Path Problems
+Make sure your scene structure matches what the verification script expects:
+- The main scene should have a GameGrid node at "/root/Main/GameGrid"
+- The main scene should have a GameUI node at "/root/Main/GameUI"
+- The GameUI node should have containers named "MovesContainer" and "ScoreContainer"
+
+## Issue 2: Method Implementation
+Ensure these methods are implemented:
+- GameUI.update_moves_display()
+- GameUI.update_score_display()
+- GameUI.use_move()
+- GameUI.add_score()
+- GameGrid.reset_game()
+- GameGrid.reset_selections()
+- GameGrid.select_dot()
+- GameGrid.try_connect_dot()
+- GameGrid.handle_touch_release()
+
+## Issue 3: Game State Variables
+Make sure your GameUI has:
+- moves_left = 16 initially
+- current_score = 0 initially
+
+## Issue 4: Running the Script
+You can run the verification script in multiple ways:
+1. From Godot Editor:
+   - Open the project in Godot
+   - Open the Test Scene (scenes/test_step7.tscn)
+   - Click the "Play" button or F5
+
+2. From command line (replace with your Godot path):
+   - `"C:/Path/To/Godot/Godot_v{version}.exe" --path "C:/Path/To/Project" --script scripts/run_step7_test.gd`
+
+## Issue 5: Manual Testing
+If automated testing continues to fail, you can manually test:
+1. Open the main scene in the editor and click "Play"
+2. Make sure:
+   - You can see "MOVES: 16" at the top of the screen
+   - You can see "SCORE: 0" at the top of the screen
+   - When you connect 3+ same-color dots, the moves decrease
+   - When dots are cleared, the score increases
+
+## Issue 6: Script Exceptions
+If you get any error messages in the Godot console:
+1. Check line numbers in the error message
+2. Fix the code at those line numbers
+3. Check for null references
+4. Ensure your implementation matches what's in the manual verification instructions
+
+## Step by Step Verification
+1. Check that GameUI nodes exist
+2. Check if both GameGrid and GameUI are properly connected to the main scene
+3. Confirm move counter starts at 16
+4. Verify that use_move() decreases the counter
+5. Confirm that add_score() adds to the score
+6. Verify that connecting dots decreases moves
+7. Verify that clearing dots increases score 

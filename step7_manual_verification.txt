@@ -1,0 +1,41 @@
+# Step 7 Manual Verification Guide
+
+Since you're experiencing issues with the automated verification script, here's a manual verification process you can follow to confirm Step 7 has been implemented correctly.
+
+## Step 1: Open the Project in Godot
+- Launch Godot Engine
+- Open your "Dot" project
+
+## Step 2: Check the Scene Structure
+Make sure:
+- Your main.tscn has both GameGrid and GameUI nodes
+- Your GameUI scene is structured correctly with MovesContainer and ScoreContainer
+
+## Step 3: Check the Scripts
+Ensure:
+- game_ui.gd has all required methods: update_moves_display(), update_score_display(), use_move(), add_score()
+- game_grid.gd calls these methods at the right times
+
+## Step 4: Run and Test
+1. Run the main scene (F5 or Play button)
+2. Visually confirm:
+   - You see "MOVES" at the top left with "16" underneath
+   - You see "SCORE" at the top right with "0" underneath
+3. Create a valid connection with at least 3 dots of the same color
+4. Confirm:
+   - The move counter decreases to 15
+   - The score increases by at least 3 (or more if you cleared more dots)
+   - If you connected dots in a square pattern or 10+ dots, verify the bonus multiplier works
+
+## Step 5: Test Game Over
+1. If possible, use all remaining moves until you reach 0
+2. Verify the game resets properly
+
+## Common Issues
+If the verification fails, check:
+1. Your user interface may be missing elements or is placed incorrectly
+2. The game_grid.gd script might not be calling game_ui methods
+3. Your functions might have errors or incorrect implementations
+
+## Mark as Complete
+If all the above tests pass, you can consider Step 7 complete and proceed to Step 8. 
