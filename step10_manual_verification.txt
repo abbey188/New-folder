@@ -1,0 +1,58 @@
+STEP 10: STAR RATING SYSTEM - MANUAL VERIFICATION
+
+This document guides you through manually verifying the star rating system in the "Dot" game.
+
+OVERVIEW:
+The star rating system awards 1-3 stars based on how many moves are left when completing a level:
+- 3 stars: 5+ moves left
+- 2 stars: 1-4 moves left
+- 1 star: 0 moves left (but objective completed)
+
+AUTOMATED TESTING:
+1. Run the automated test by opening the test_step10.tscn scene and running it.
+2. Check the console output for verification results.
+3. All tests should pass, showing the star rating system works correctly.
+
+MANUAL VERIFICATION:
+
+TEST 1: THREE STARS (5+ MOVES LEFT)
+1. Open the game scene or test scene.
+2. Modify the game state to have 6 moves left and complete the objective.
+   - You can use the test_step10.tscn scene which has this built-in.
+   - Alternatively, play normally and try to complete the objective with 5+ moves left.
+3. Verify that the level completion popup shows THREE stars with a pleasant animation.
+4. Each star should appear with a slight delay and scale up with a bounce effect.
+
+TEST 2: TWO STARS (1-4 MOVES LEFT)
+1. Reset the game or restart the test.
+2. Modify the game state to have 3 moves left and complete the objective.
+   - Use the test scene or play normally until you have 1-4 moves left.
+3. Verify that the level completion popup shows TWO stars with animation.
+4. The first two stars should be visible and animated, while the third star remains hidden.
+
+TEST 3: ONE STAR (0 MOVES LEFT)
+1. Reset the game or restart the test.
+2. Modify the game state to have 0 moves left and complete the objective.
+   - Use the test scene or play normally until you have exactly 0 moves left.
+3. Verify that the level completion popup shows only ONE star with animation.
+4. Only the first star should be visible and animated.
+
+TEST 4: LEVEL FAILED
+1. Reset the game or restart the test.
+2. Use all moves without completing the objective.
+3. Verify that the level failed popup shows NO stars.
+4. Confirm that the popup title shows "LEVEL FAILED" instead of "LEVEL COMPLETE".
+
+VERIFICATION CHECKLIST:
+✓ 3 stars appear when completing a level with 5+ moves left
+✓ 2 stars appear when completing a level with 1-4 moves left
+✓ 1 star appears when completing a level with exactly 0 moves left
+✓ No stars appear when failing the level
+✓ Stars have a pleasing animation effect (scale from 0 to 1)
+✓ Stars appear sequentially with a slight delay between each
+✓ Star color is yellow with an orange outline
+
+If all of these tests pass, Step 10 has been successfully implemented!
+
+NEXT STEPS:
+After verifying Step 10, proceed to Step 11: Create a Basic Level Map. 

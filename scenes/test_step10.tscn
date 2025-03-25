@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/game_grid.tscn" id="1_lbvpn"]
+[ext_resource type="PackedScene" path="res://scenes/game_ui.tscn" id="2_lfk48"]
+[ext_resource type="Script" path="res://scripts/verify_step10.gd" id="3_v1jbx"]
+[ext_resource type="Script" path="res://scripts/run_step10_test.gd" id="4_6t8fk"]
+
+[node name="Main" type="Node"]
+script = ExtResource("4_6t8fk")
+
+[node name="GameGrid" parent="." instance=ExtResource("1_lbvpn")]
+
+[node name="GameUI" parent="." instance=ExtResource("2_lfk48")]
+
+[node name="Verification" type="Node" parent="."]
+script = ExtResource("3_v1jbx") 

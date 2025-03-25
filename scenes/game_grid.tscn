@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://by38d6e0t2lvw"]
+[gd_scene load_steps=3 format=3 uid="uid://by38d6e0t2lvw"]
 
 [ext_resource type="Script" uid="uid://braf4gh0olovu" path="res://scripts/game_grid.gd" id="1_8oc5f"]
+[ext_resource type="PackedScene" uid="uid://b8j6y8q3x4n5n" path="res://scenes/game_ui.tscn" id="2_8oc5f"]
 
 [node name="GameGrid" type="Node2D"]
 script = ExtResource("1_8oc5f")
+
+[node name="GameUI" parent="." instance=ExtResource("2_8oc5f")]

@@ -60,7 +60,7 @@ func _ready():
 	setup_connection_line()
 	
 	# Get reference to UI
-	game_ui = get_node("/root/Main/GameUI")
+	game_ui = $GameUI
 	
 	# Connect signals for game state
 	if game_ui:

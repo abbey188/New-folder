@@ -1,0 +1,73 @@
+{
+	"levels": [
+		{
+			"level_id": 1,
+			"name": "First Steps",
+			"grid_size": {"rows": 6, "columns": 6},
+			"available_colors": ["red", "blue", "green", "yellow", "purple"],
+			"initial_board_state": "random",
+			"objectives": [
+				{
+					"type": "color",
+					"target": "red",
+					"amount": 10
+				}
+			],
+			"move_limit": 16,
+			"score_targets": {
+				"one_star": 0,
+				"two_stars": 4,
+				"three_stars": 5
+			},
+			"background_theme": "default",
+			"music_track": "level1",
+			"next_level_id": 2
+		},
+		{
+			"level_id": 2,
+			"name": "Color Challenge",
+			"grid_size": {"rows": 6, "columns": 6},
+			"available_colors": ["red", "blue", "green", "yellow", "purple"],
+			"initial_board_state": "random",
+			"objectives": [
+				{
+					"type": "color",
+					"target": "blue",
+					"amount": 15
+				}
+			],
+			"move_limit": 14,
+			"score_targets": {
+				"one_star": 0,
+				"two_stars": 4,
+				"three_stars": 5
+			},
+			"background_theme": "ocean",
+			"music_track": "level2",
+			"next_level_id": 3
+		},
+		{
+			"level_id": 3,
+			"name": "Master's Challenge",
+			"grid_size": {"rows": 6, "columns": 6},
+			"available_colors": ["red", "blue", "green", "yellow", "purple"],
+			"initial_board_state": "random",
+			"objectives": [
+				{
+					"type": "color",
+					"target": "green",
+					"amount": 20
+				}
+			],
+			"move_limit": 12,
+			"score_targets": {
+				"one_star": 0,
+				"two_stars": 4,
+				"three_stars": 5
+			},
+			"background_theme": "forest",
+			"music_track": "level3",
+			"next_level_id": null
+		}
+	]
+} 
