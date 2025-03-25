@@ -1,9 +1,9 @@
 extends Control
 
-@onready var level_1_button = $VBoxContainer/Level1Button
-@onready var level_2_button = $VBoxContainer/Level2Button
-@onready var level_3_button = $VBoxContainer/Level3Button
-@onready var back_button = $VBoxContainer/BackButton
+@onready var level_1_button = $LevelsContainer/Level1
+@onready var level_2_button = $LevelsContainer/Level2
+@onready var level_3_button = $LevelsContainer/Level3
+@onready var back_button = $BackButton
 
 func _ready():
 	# Connect button signals
@@ -37,16 +37,16 @@ func update_level_states():
 
 func _on_level_1_button_pressed():
 	# Change to game scene
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	get_tree().change_scene_to_file("res://scenes/game_grid.tscn")
 
 func _on_level_2_button_pressed():
 	# Change to game scene with level 2 data
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	get_tree().change_scene_to_file("res://scenes/game_grid.tscn")
 
 func _on_level_3_button_pressed():
 	# Change to game scene with level 3 data
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	get_tree().change_scene_to_file("res://scenes/game_grid.tscn")
 
 func _on_back_button_pressed():
 	# Return to main menu
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn") 
+	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn") 
