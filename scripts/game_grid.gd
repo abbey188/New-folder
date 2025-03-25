@@ -51,7 +51,7 @@ var audio_manager = null
 
 # Achievement variables
 var level_number = 1  # Assuming a default level number
-var objective_progress = 0  # Assuming a default objective progress
+var current_objective_progress = 0  # Assuming a default objective progress
 
 func _ready():
 	# Seed the random number generator
@@ -559,7 +559,7 @@ func check_level_completion_achievements(stars: int) -> void:
 		achievement_manager.check_achievement("perfect_level")
 	
 	# Check for color master achievement
-	if objective_progress >= 50:
+	if current_objective_progress >= 50:
 		achievement_manager.check_achievement("color_master")
 
 func calculate_stars():
@@ -582,7 +582,7 @@ func get_level_number():
 	# This function should return the current level number
 	return 1  # Placeholder return, actual implementation needed
 
-func objective_progress():
-	# Implementation of objective_progress function
+func get_objective_progress():
+	# Implementation of get_objective_progress function
 	# This function should return the current objective progress
 	return 50  # Placeholder return, actual implementation needed 

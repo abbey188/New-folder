@@ -22,9 +22,8 @@ func _ready():
 
 func update_level_states():
 	# Load level progress
-	var file = File.new()
-	if file.file_exists("user://level_progress.save"):
-		file.open("user://level_progress.save", File.READ)
+	if FileAccess.file_exists("user://level_progress.save"):
+		var file = FileAccess.open("user://level_progress.save", FileAccess.READ)
 		var progress = file.get_var()
 		file.close()
 		
