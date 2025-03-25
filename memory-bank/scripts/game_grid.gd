@@ -13,6 +13,7 @@ var objective_target: int = 10  # Default target, should be loaded from level da
 @onready var score_label = $UI/ScoreLabel
 @onready var objective_label = $UI/ObjectiveLabel
 @onready var completion_popup = $UI/CompletionPopup
+@onready var visual_effects = $VisualEffects
 
 # Grid configuration
 const GRID_SIZE = 6
@@ -59,8 +60,9 @@ func create_dot(row: int, col: int) -> Node2D:
 	var y = row * (DOT_SIZE + DOT_SPACING)
 	dot.position = Vector2(x, y)
 	
-	# Set random color
-	dot.modulate = COLORS[randi() % COLORS.size()]
+	# Set random color with slight transparency
+	var color = COLORS[randi() % COLORS.size()]
+	dot.modulate = Color(color.r, color.g, color.b, 0.8)
 	
 	# Add metadata
 	dot.set_meta("row", row)
@@ -83,12 +85,12 @@ func toggle_dot_selection(dot: Node2D):
 	if dot in selected_dots:
 		# Deselect dot
 		selected_dots.erase(dot)
-		dot.scale = Vector2.ONE
+		visual_effects.animate_dot_selection(dot, false)
 	else:
 		# Select dot
 		if can_select_dot(dot):
 			selected_dots.append(dot)
-			dot.scale = Vector2(1.1, 1.1)
+			visual_effects.animate_dot_selection(dot, true)
 			
 			# Check for valid connection
 			if selected_dots.size() >= 3:
@@ -124,7 +126,7 @@ func check_connection():
 	else:
 		# Deselect all dots
 		for dot in selected_dots:
-			dot.scale = Vector2.ONE
+			visual_effects.animate_dot_selection(dot, false)
 		selected_dots.clear()
 
 func clear_connected_dots():
@@ -137,12 +139,14 @@ func clear_connected_dots():
 	# Update objective progress
 	objective_progress += selected_dots.size()
 	
-	# Animate and remove dots
+	# Animate and remove dots with particle effects
 	for dot in selected_dots:
-		var tween = create_tween()
-		tween.tween_property(dot, "scale", Vector2(1.2, 1.2), 0.2)
-		tween.parallel().tween_property(dot, "modulate:a", 0.0, 0.2)
-		tween.tween_callback(dot.queue_free)
+		# Create particle effect
+		var particles = visual_effects.create_dot_clear_effect(dot)
+		dots_container.add_child(particles)
+		
+		# Animate dot clearing
+		visual_effects.animate_dot_clear(dot)
 	
 	selected_dots.clear()
 	
@@ -166,6 +170,10 @@ func handle_level_completion():
 	# Show completion popup
 	completion_popup.show()
 	completion_popup.set_stars(stars)
+	
+	# Create celebratory effect
+	var particles = visual_effects.create_level_complete_effect(self)
+	add_child(particles)
 	
 	# Save progress
 	SaveManager.get_instance().set_level_stars(level_number, stars)

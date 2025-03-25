@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8k6y8q3x4n5n"]
+
+[ext_resource type="Script" path="res://scripts/particle_effect.gd" id="1_3u4vx"]
+
+[node name="LevelCompleteParticles" type="GPUParticles2D"]
+emitting = true
+amount = 50
+lifetime = 1.0
+one_shot = true
+explosiveness = 0.6
+randomness = 0.3
+fixed_fps = 0
+interpolate = false
+fract_delta = true
+visibility_rect = Rect2(-200, -200, 400, 400)
+script = ExtResource("1_3u4vx")
+
+[connection signal="finished" from="." to="." method="_on_finished"] 

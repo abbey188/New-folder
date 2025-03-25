@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8j6y8q3x4n5m"]
+
+[ext_resource type="Script" path="res://scripts/particle_effect.gd" id="1_2u4vx"]
+
+[node name="DotClearParticles" type="GPUParticles2D"]
+emitting = true
+amount = 20
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.8
+randomness = 0.2
+fixed_fps = 0
+interpolate = false
+fract_delta = true
+visibility_rect = Rect2(-100, -100, 200, 200)
+script = ExtResource("1_2u4vx")
+
+[connection signal="finished" from="." to="." method="_on_finished"] 
