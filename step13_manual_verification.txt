@@ -1,0 +1,80 @@
+# Step 13: Level Progression System - Manual Verification
+
+## Prerequisites
+1. Open the project in Godot
+2. Ensure all scenes are properly set up:
+   - level_map.tscn
+   - game_grid.tscn
+   - All UI elements are in place
+
+## Test Cases
+
+### Test Case 1: Initial State
+1. Launch the game
+2. Verify that:
+   - Level 1 button is enabled and fully visible
+   - Level 2 and 3 buttons are disabled and grayed out
+   - No star ratings are shown on any level buttons
+
+### Test Case 2: Level 1 Completion
+1. Start Level 1
+2. Complete the level with 3 stars
+3. Verify that:
+   - The completion popup appears
+   - All three stars are lit up
+   - The continue button is visible
+4. Click continue
+5. Verify that:
+   - You return to the level map
+   - Level 1 button shows "Level 1 (3★)"
+   - Level 2 button is now enabled and fully visible
+   - Level 3 button remains disabled
+
+### Test Case 3: Progress Persistence
+1. Exit the game completely
+2. Relaunch the game
+3. Verify that:
+   - Level 1 shows "Level 1 (3★)"
+   - Level 2 is still enabled
+   - Level 3 is still disabled
+
+### Test Case 4: Level 2 Completion
+1. Start Level 2
+2. Complete it with 2 stars
+3. Verify that:
+   - The completion popup appears with 2 stars
+   - Level 2 button updates to "Level 2 (2★)"
+   - Level 3 becomes enabled
+4. Click continue
+5. Verify that:
+   - You return to the level map
+   - All three levels are now enabled
+   - Star ratings are preserved
+
+### Test Case 5: Level 3 Completion
+1. Start Level 3
+2. Complete it with 1 star
+3. Verify that:
+   - The completion popup appears with 1 star
+   - Level 3 button updates to "Level 3 (1★)"
+4. Click continue
+5. Verify that:
+   - You return to the level map
+   - All star ratings are preserved
+
+## Expected Results
+- Level progression should be smooth and intuitive
+- Star ratings should be clearly visible on completed levels
+- Progress should persist between game sessions
+- UI should be responsive and provide clear feedback
+- No errors should appear in the output panel
+
+## Common Issues to Watch For
+1. Buttons not updating their state correctly
+2. Star ratings not displaying properly
+3. Progress not saving between sessions
+4. Level completion signals not firing
+5. UI elements not properly positioned or styled
+
+## Success Criteria
+All test cases must pass with no errors or unexpected behavior. The level progression system should provide a smooth, intuitive experience for players. 
