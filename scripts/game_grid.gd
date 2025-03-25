@@ -525,42 +525,69 @@ func toggle_dot_selection(dot):
 	else:
 		select_dot(dot) 
 
-func handle_level_completion():
-	var stars = calculate_stars()
+func _show_completion_popup(stars: int):
+	# Get references
+	var popup = get_node("CompletionPopup")
+	var effects = get_node("VisualEffects")
 	
 	# Show completion popup
-	completion_popup.show()
-	completion_popup.set_stars(stars)
+	if popup:
+		popup.show()
+		popup.call("set_stars", stars)
 	
 	# Create celebratory effect
-	var particles = visual_effects.create_level_complete_effect(self)
-	add_child(particles)
+	if effects:
+		var particles = effects.call("create_level_complete_effect", [self])
+		if particles:
+			add_child(particles)
 	
 	# Save progress
-	SaveManager.get_instance().set_level_stars(level_number, stars)
+	var current_level = get_level_number()
+	
+	# Save progress using FileAccess since SaveManager isn't implemented yet
+	var save_data = {
+		"level_stars": stars,
+		"level_number": current_level
+	}
+	
+	var file = FileAccess.open("user://level_progress.save", FileAccess.WRITE)
+	if file:
+		file.store_var(save_data)
+		file.close()
 	
 	# Unlock next level
-	var next_level = level_number + 1
+	var next_level = current_level + 1
 	if next_level <= 3:  # Assuming we have 3 levels
-		SaveManager.get_instance().unlock_level(next_level)
-	
-	# Check for achievements
-	check_level_completion_achievements(stars)
+		var progress_file = FileAccess.open("user://level_progress.save", FileAccess.READ_WRITE)
+		if progress_file:
+			var data = progress_file.get_var()
+			data["level_" + str(next_level) + "_unlocked"] = true
+			progress_file.store_var(data)
+			progress_file.close()
 
 func check_level_completion_achievements(stars: int) -> void:
-	var achievement_manager = AchievementManager.get_instance()
+	# Store achievement progress locally since AchievementManager isn't implemented yet
+	var achievements = {}
+	if FileAccess.file_exists("user://achievements.save"):
+		var file = FileAccess.open("user://achievements.save", FileAccess.READ)
+		if file:
+			achievements = file.get_var()
+			file.close()
 	
-	# Check for first victory achievement
-	if level_number == 1:
-		achievement_manager.check_achievement("first_victory")
-	
-	# Check for perfect level achievement
+	# Update achievements
+	var current_level = get_level_number()
+	if current_level == 1:
+		achievements["first_victory"] = true
 	if stars == 3:
-		achievement_manager.check_achievement("perfect_level")
+		achievements["perfect_level"] = true
+	if get_objective_progress() >= 50:
+		achievements["color_master"] = true
 	
-	# Check for color master achievement
-	if current_objective_progress >= 50:
-		achievement_manager.check_achievement("color_master")
+	# Save achievements
+	var file = FileAccess.open("user://achievements.save", FileAccess.WRITE)
+	if file:
+		file.store_var(achievements)
+		file.close()
 
 func calculate_stars():
 	# Implementation of calculate_stars function
