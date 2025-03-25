@@ -8,6 +8,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 SaveManager="*res://scripts/save_manager.gd"
+AchievementManager="*res://scripts/achievement_manager.gd"
 
 [display]
 
@@ -26,4 +27,5 @@ touch={
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.2, 0.2, 0.2, 1) 
+environment/defaults/default_clear_color=Color(0.2, 0.2, 0.2, 1)
+renderer/rendering_method="gl_compatibility" 
