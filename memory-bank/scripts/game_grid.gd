@@ -6,6 +6,8 @@ var moves_remaining: int = 16
 var score: int = 0
 var objective_progress: int = 0
 var objective_target: int = 10  # Default target, should be loaded from level data
+var start_time: float = 0.0
+var achievement_manager: AchievementManager
 
 # Node references
 @onready var dots_container = $DotsContainer
@@ -30,6 +32,7 @@ const COLORS = [
 # Game state
 var selected_dots = []
 var is_processing = false
+var color_clear_counts = {}  # Track dots cleared by color
 
 func _ready():
 	# Initialize the grid
@@ -38,6 +41,12 @@ func _ready():
 	
 	# Connect signals
 	completion_popup.continue_button.pressed.connect(_on_continue_pressed)
+	
+	# Get achievement manager
+	achievement_manager = get_node("/root/AchievementManager")
+	
+	# Start timing
+	start_time = Time.get_ticks_msec()
 
 func create_grid():
 	# Clear existing dots
@@ -139,6 +148,19 @@ func clear_connected_dots():
 	# Update objective progress
 	objective_progress += selected_dots.size()
 	
+	# Track color clear counts
+	if not color_clear_counts.has(color):
+		color_clear_counts[color] = 0
+	color_clear_counts[color] += selected_dots.size()
+	
+	# Check for Chain Reaction achievement
+	if selected_dots.size() >= 10:
+		achievement_manager.unlock_achievement("chain_reaction")
+	
+	# Check for Color Master achievement
+	if color_clear_counts[color] >= 50:
+		achievement_manager.unlock_achievement("color_master")
+	
 	# Animate and remove dots with particle effects
 	for dot in selected_dots:
 		# Create particle effect
@@ -182,6 +204,18 @@ func handle_level_completion():
 	var next_level = level_number + 1
 	if next_level <= 3:  # Assuming we have 3 levels
 		SaveManager.get_instance().unlock_level(next_level)
+	
+	# Check for achievements
+	if level_number == 1:
+		achievement_manager.unlock_achievement("first_victory")
+	
+	if stars == 3:
+		achievement_manager.unlock_achievement("perfect_level")
+	
+	# Check for Speed Demon achievement
+	var completion_time = (Time.get_ticks_msec() - start_time) / 1000.0  # Convert to seconds
+	if completion_time <= 30:
+		achievement_manager.unlock_achievement("speed_demon")
 
 func calculate_stars() -> int:
 	if moves_remaining >= 5:
