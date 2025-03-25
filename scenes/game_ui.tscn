@@ -1,0 +1,69 @@
+[gd_scene load_steps=3 format=3 uid="uid://bq7a5xtl8ptfa"]
+
+[ext_resource type="Script" path="res://scripts/game_ui.gd" id="1_bv2vn"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k8j5t"]
+bg_color = Color(0.2, 0.2, 0.2, 0.8)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="GameUI" type="CanvasLayer"]
+script = ExtResource("1_bv2vn")
+
+[node name="MovesContainer" type="MarginContainer" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 120.0
+offset_bottom = 120.0
+
+[node name="Background" type="Panel" parent="MovesContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_k8j5t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MovesContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="MovesTitle" type="Label" parent="MovesContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "MOVES"
+horizontal_alignment = 1
+
+[node name="MovesLabel" type="Label" parent="MovesContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "16"
+horizontal_alignment = 1
+
+[node name="ScoreContainer" type="MarginContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 120.0
+grow_horizontal = 0
+
+[node name="Background" type="Panel" parent="ScoreContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_k8j5t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScoreContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ScoreTitle" type="Label" parent="ScoreContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "SCORE"
+horizontal_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="ScoreContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "0"
+horizontal_alignment = 1 

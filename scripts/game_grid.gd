@@ -44,6 +44,7 @@ var last_selected_dot = null  # Last dot that was selected
 
 # Game state
 var is_processing = false  # Flag to prevent input during animations
+var game_ui = null  # Reference to the UI layer
 
 func _ready():
 	# Seed the random number generator
@@ -57,6 +58,36 @@ func _ready():
 	
 	# Set up the connection line
 	setup_connection_line()
+	
+	# Get reference to UI
+	game_ui = get_node("/root/Main/GameUI")
+	
+	# Connect signal for game over
+	if game_ui:
+		game_ui.no_moves_left.connect(_on_no_moves_left)
+
+func _on_no_moves_left():
+	# Handle game over state - will be implemented in future steps
+	print("Game Over: No moves left!")
+	# For now, we'll just restart the game
+	await get_tree().create_timer(1.0).timeout
+	reset_game()
+
+func reset_game():
+	# Clear the grid
+	for row in grid:
+		for dot in row:
+			if dot != null:
+				dot.queue_free()
+	
+	grid.clear()
+	
+	# Regenerate the grid
+	generate_grid()
+	
+	# Reset UI
+	if game_ui:
+		game_ui.reset_game()
 
 func setup_connection_line():
 	# Add the Line2D node for connections
@@ -151,6 +182,10 @@ func handle_touch_release():
 	# If we have enough dots connected, clear them
 	if connected_dots.size() >= MIN_DOTS_TO_CLEAR:
 		clear_connected_dots()
+		
+		# Use a move in the UI when a valid connection is made
+		if game_ui:
+			game_ui.use_move()
 	else:
 		# Reset all selections and connections
 		reset_selections()
@@ -179,6 +214,51 @@ func handle_touch(touch_position):
 					# Try to connect to the previously selected dot
 					try_connect_dot(dot)
 				return
+
+# Check if dots form a square (for bonus points)
+func is_square_shape(dots):
+	# Need at least 4 dots to form a square
+	if dots.size() < 4:
+		return false
+	
+	# Simple square detection: check if there are exactly 4 dots forming corners
+	var positions = []
+	for dot in dots:
+		positions.append(dot.get_meta("grid_pos"))
+	
+	# Get min and max coordinates
+	var min_x = INF
+	var min_y = INF
+	var max_x = -INF
+	var max_y = -INF
+	
+	for pos in positions:
+		min_x = min(min_x, pos.x)
+		min_y = min(min_y, pos.y)
+		max_x = max(max_x, pos.x)
+		max_y = max(max_y, pos.y)
+	
+	# Check if it's a square/rectangle (width and height > 0)
+	var width = max_x - min_x
+	var height = max_y - min_y
+	
+	if width <= 0 or height <= 0:
+		return false
+	
+	# For a perfect square, all 4 corners must be present
+	var corners = [
+		Vector2(min_x, min_y),
+		Vector2(max_x, min_y),
+		Vector2(min_x, max_y),
+		Vector2(max_x, max_y)
+	]
+	
+	var corner_count = 0
+	for corner in corners:
+		if corner in positions:
+			corner_count += 1
+	
+	return corner_count == 4
 
 # Select a dot (first dot in a chain)
 func select_dot(dot):
@@ -277,6 +357,12 @@ func clear_connected_dots():
 	# Set processing flag to prevent input during animations
 	is_processing = true
 	
+	# Store the number of dots being cleared for scoring
+	var dots_cleared = connected_dots.size()
+	
+	# Check if the connected dots form a square for bonus points
+	var is_square = is_square_shape(connected_dots)
+	
 	# Create a tween for fade-out animation
 	var tween = create_tween()
 	
@@ -304,6 +390,10 @@ func clear_connected_dots():
 		
 		# Add to list of positions that need new dots
 		empty_positions.append(Vector2(col, row))
+	
+	# Update score in the UI
+	if game_ui:
+		game_ui.add_score(dots_cleared, is_square)
 	
 	# Clear the connections list
 	connected_dots.clear()

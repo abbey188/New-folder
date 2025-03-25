@@ -1,3 +1,1 @@
-res://main.tscn
-res://scenes/game_grid.tscn
-res://step5_verification.txt
+res://scripts/game_grid.gd

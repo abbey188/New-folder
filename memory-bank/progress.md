@@ -77,10 +77,31 @@
 - **Test Results:** Grid successfully refills after dots are cleared, with proper animations and complete restoration
 - **Status:** ✓ Complete
 
+## Step 7: Add Move Counter and Scoring System (Completed)
+- Date: [Current Date]
+- Created UI elements for game state tracking:
+  - Move counter showing available moves (starting at 16)
+  - Score display showing current points
+- Implemented a CanvasLayer-based UI system with:
+  - Styled panels with rounded corners
+  - Clear labeling of "MOVES" and "SCORE"
+  - Proper positioning at the top of the screen
+- Added scoring mechanics:
+  - Basic scoring: 1 point per dot cleared
+  - Bonus scoring for special patterns:
+    - 50% bonus for square patterns
+    - 50% bonus for long chains (10+ dots)
+- Integrated game state management:
+  - Decreasing moves when valid connections are made
+  - Tracking score accumulation throughout gameplay
+  - Detecting when player has no moves left
+  - Providing simple game reset functionality
+- **Test Results:** UI elements display correctly, moves decrease with each connection, and score increases when dots are cleared
+- **Status:** ✓ Complete
+
 ## Next Steps
-- Proceed to Step 7: Add Move Counter and Scoring System
-  - Create a UI label displaying "Moves: 16" at the top of the screen
-  - Decrease the move count when valid connections are made
-  - Implement a scoring system for cleared dots
-  - Add UI elements to display the current score
+- Proceed to Step 8: Implement Level Objectives
+  - Define an objective (e.g., "Clear 10 red dots")
+  - Add UI label to display progress (e.g., "0/10 red")
+  - Track cleared colored dots during gameplay
 
