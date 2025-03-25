@@ -20,14 +20,30 @@ const SELECTION_SCALE = 1.1  # 10% size increase when selected
 const GLOW_COLOR = Color(1, 1, 1, 0.7)  # White glow with transparency
 const GLOW_SIZE = 5  # Size of the glow in pixels
 
+# Connection properties
+const LINE_WIDTH = 8  # Line thickness (about 1/10th of dot diameter)
+const LINE_OPACITY = 0.8  # Line opacity
+const MIN_DOTS_TO_CLEAR = 3  # Minimum connected dots required to clear
+const FADE_OUT_DURATION = 0.4  # Fade-out animation duration when cleared
+
+# Refill properties
+const REFILL_DELAY = 0.05  # Short delay before refilling (seconds)
+const DROP_DURATION = 0.2  # Duration of the drop animation (seconds)
+const DROP_EASING = Tween.EASE_IN_OUT  # Easing curve for the drop animation
+
 # Calculate actual distance between dot centers
 var dot_distance = DOT_DIAMETER + DOT_SPACING
 
 # Holds references to all dots
 var grid = []
 
-# Current selected dot
-var selected_dot = null
+# Connection variables
+var connected_dots = []  # Dots currently connected
+var connection_line = Line2D.new()  # Line for visualizing connections
+var last_selected_dot = null  # Last dot that was selected
+
+# Game state
+var is_processing = false  # Flag to prevent input during animations
 
 func _ready():
 	# Seed the random number generator
@@ -38,6 +54,19 @@ func _ready():
 	
 	# Center the grid on screen
 	center_grid()
+	
+	# Set up the connection line
+	setup_connection_line()
+
+func setup_connection_line():
+	# Add the Line2D node for connections
+	connection_line.width = LINE_WIDTH
+	connection_line.default_color = Color(1, 1, 1, LINE_OPACITY)
+	connection_line.joint_mode = Line2D.LINE_JOINT_ROUND
+	connection_line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	connection_line.end_cap_mode = Line2D.LINE_CAP_ROUND
+	add_child(connection_line)
+	connection_line.visible = false
 
 func generate_grid():
 	# Loop through rows and columns to create dots
@@ -106,8 +135,25 @@ func center_grid():
 
 # Handle input events
 func _input(event):
-	if event is InputEventScreenTouch and event.pressed:
-		handle_touch(event.position)
+	# Ignore input while processing animations
+	if is_processing:
+		return
+		
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			handle_touch(event.position)
+		else:
+			# On touch release, check if we have enough dots connected
+			handle_touch_release()
+
+# Handle touch release (finger lifted from screen)
+func handle_touch_release():
+	# If we have enough dots connected, clear them
+	if connected_dots.size() >= MIN_DOTS_TO_CLEAR:
+		clear_connected_dots()
+	else:
+		# Reset all selections and connections
+		reset_selections()
 
 # Process touch input
 func handle_touch(touch_position):
@@ -117,16 +163,266 @@ func handle_touch(touch_position):
 	# Check if touch is within any dot
 	for row in grid:
 		for dot in row:
+			# Skip empty grid spaces
+			if dot == null:
+				continue
+				
 			# Calculate distance from touch to dot center
 			var distance = local_position.distance_to(dot.position)
 			
-			# If touch is within dot radius, select it
+			# If touch is within dot radius, try to select it or connect it
 			if distance <= DOT_DIAMETER / 2:
-				toggle_dot_selection(dot)
+				if connected_dots.is_empty():
+					# First dot selection
+					select_dot(dot)
+				else:
+					# Try to connect to the previously selected dot
+					try_connect_dot(dot)
 				return
 
-# Toggle selection of a dot
+# Select a dot (first dot in a chain)
+func select_dot(dot):
+	dot.scale = Vector2(SELECTION_SCALE, SELECTION_SCALE)  # Increase size by 10%
+	dot.modulate = GLOW_COLOR  # Add glow effect
+	dot.set_meta("selected", true)
+	
+	# Add to connected dots list
+	connected_dots.append(dot)
+	last_selected_dot = dot
+	
+	# Set the connection line color to match the dot color
+	connection_line.default_color = dot.get_meta("color").lerp(Color.WHITE, 0.2)
+	connection_line.visible = true
+	
+	# Start the line at this dot's position
+	update_connection_line()
+
+# Try to connect a dot to the current chain
+func try_connect_dot(dot):
+	# Don't connect if dot is already connected
+	if dot in connected_dots:
+		# If it's the previous dot, allow backtracking
+		if connected_dots.size() > 1 and dot == connected_dots[connected_dots.size() - 2]:
+			# Remove the last dot (backtracking)
+			var last_dot = connected_dots.pop_back()
+			last_dot.modulate = Color(1, 1, 1)  # Reset appearance
+			last_dot.scale = Vector2(1, 1)
+			last_dot.set_meta("selected", false)
+			
+			# Update the last selected dot
+			last_selected_dot = connected_dots[connected_dots.size() - 1]
+			
+			# Update the connection line
+			update_connection_line()
+		return
+	
+	# Check if the dot is the same color
+	if dot.get_meta("color") != connected_dots[0].get_meta("color"):
+		return
+	
+	# Check if dots are adjacent
+	if not are_dots_adjacent(last_selected_dot, dot):
+		return
+	
+	# Connect the dot
+	dot.scale = Vector2(SELECTION_SCALE, SELECTION_SCALE)  # Increase size by 10%
+	dot.modulate = GLOW_COLOR  # Add glow effect 
+	dot.set_meta("selected", false)  # We use this metadata for individual dot selection
+	
+	# Add to connected dots list
+	connected_dots.append(dot)
+	last_selected_dot = dot
+	
+	# Update the connection line
+	update_connection_line()
+
+# Check if two dots are adjacent (orthogonally or diagonally)
+func are_dots_adjacent(dot1, dot2):
+	var pos1 = dot1.get_meta("grid_pos")
+	var pos2 = dot2.get_meta("grid_pos")
+	
+	# Calculate the distance between the dots
+	var dx = abs(pos1.x - pos2.x)
+	var dy = abs(pos1.y - pos2.y)
+	
+	# Dots are adjacent if they're 1 step away (including diagonals)
+	return dx <= 1 and dy <= 1 and (dx + dy > 0)
+
+# Update the visual connection line
+func update_connection_line():
+	connection_line.clear_points()
+	
+	# Add each dot's position to the line
+	for dot in connected_dots:
+		connection_line.add_point(dot.position)
+
+# Reset all selections and connections
+func reset_selections():
+	# Reset all connected dots
+	for dot in connected_dots:
+		dot.scale = Vector2(1, 1)
+		dot.modulate = Color(1, 1, 1)
+		dot.set_meta("selected", false)
+	
+	# Clear the connection line
+	connection_line.clear_points()
+	connection_line.visible = false
+	
+	# Clear the connected dots list
+	connected_dots.clear()
+	last_selected_dot = null
+
+# Clear the connected dots (when there are 3+ in a chain)
+func clear_connected_dots():
+	# Set processing flag to prevent input during animations
+	is_processing = true
+	
+	# Create a tween for fade-out animation
+	var tween = create_tween()
+	
+	# Fade out each connected dot
+	for dot in connected_dots:
+		# Set up the fade animation
+		tween.parallel().tween_property(dot, "modulate", Color(1, 1, 1, 0), FADE_OUT_DURATION)
+		tween.parallel().tween_property(dot, "scale", Vector2(1.5, 1.5), FADE_OUT_DURATION)
+	
+	# When the tween completes, remove the dots from the grid
+	await tween.finished
+	
+	# Remove dots from the grid
+	var empty_positions = []
+	for dot in connected_dots:
+		var grid_pos = dot.get_meta("grid_pos")
+		var row = int(grid_pos.y)
+		var col = int(grid_pos.x)
+		
+		# Remove from scene
+		dot.queue_free()
+		
+		# Set grid position to null
+		grid[row][col] = null
+		
+		# Add to list of positions that need new dots
+		empty_positions.append(Vector2(col, row))
+	
+	# Clear the connections list
+	connected_dots.clear()
+	last_selected_dot = null
+	
+	# Hide the connection line
+	connection_line.clear_points()
+	connection_line.visible = false
+	
+	# Short delay before refilling
+	await get_tree().create_timer(REFILL_DELAY).timeout
+	
+	# Refill the grid
+	await refill_grid()
+	
+	# Reset processing flag
+	is_processing = false
+
+# Refill the grid with new dots
+func refill_grid():
+	# First, collapse columns to fill empty spaces
+	await collapse_columns()
+	
+	# Then add new dots at the top
+	await add_new_dots_at_top()
+
+# Collapse columns to fill empty spaces
+func collapse_columns():
+	var tween = create_tween()
+	var dots_moved = false
+	
+	# Process each column
+	for col in range(GRID_SIZE):
+		# Start from the bottom of the column and move upward
+		var empty_row = -1
+		
+		# Process from bottom to top
+		for row in range(GRID_SIZE - 1, -1, -1):
+			# If this is an empty position, mark it
+			if grid[row][col] == null:
+				if empty_row == -1:
+					empty_row = row
+			# If we have an empty position below and this position has a dot
+			elif empty_row != -1:
+				# Move this dot down to the empty position
+				var dot = grid[row][col]
+				
+				# Update grid references
+				grid[empty_row][col] = dot
+				grid[row][col] = null
+				
+				# Update dot's internal position metadata
+				dot.set_meta("grid_pos", Vector2(col, empty_row))
+				
+				# Animate the dot moving down
+				var new_position = Vector2(col * dot_distance, empty_row * dot_distance)
+				tween.parallel().tween_property(dot, "position", new_position, DROP_DURATION).set_ease(DROP_EASING)
+				
+				# Mark that we moved a dot
+				dots_moved = true
+				
+				# Now the current position is empty, and we need to find the next empty position
+				empty_row -= 1
+	
+	# Wait for all dots to finish moving
+	if dots_moved:
+		await tween.finished
+
+# Add new dots at the top where needed
+func add_new_dots_at_top():
+	var tween = create_tween()
+	var new_dots_added = false
+	
+	# Check each column for empty spaces at the top
+	for col in range(GRID_SIZE):
+		var empty_count = 0
+		
+		# Count empty spaces in this column
+		for row in range(GRID_SIZE):
+			if grid[row][col] == null:
+				empty_count += 1
+		
+		# If there are empty spaces, add new dots
+		if empty_count > 0:
+			for i in range(empty_count):
+				# Create a new dot
+				var new_dot = create_dot()
+				
+				# Position dot at the top of the column, above the grid
+				var target_row = empty_count - 1 - i
+				new_dot.position.x = col * dot_distance
+				new_dot.position.y = -dot_distance * (i + 1)  # Start above the grid
+				
+				# Update grid reference
+				grid[target_row][col] = new_dot
+				
+				# Update dot's internal position metadata
+				new_dot.set_meta("grid_pos", Vector2(col, target_row))
+				
+				# Add to scene
+				add_child(new_dot)
+				
+				# Animate the dot falling down
+				var target_position = Vector2(col * dot_distance, target_row * dot_distance)
+				tween.parallel().tween_property(new_dot, "position", target_position, DROP_DURATION).set_ease(DROP_EASING)
+				
+				# Mark that we added a new dot
+				new_dots_added = true
+	
+	# Wait for all new dots to finish falling
+	if new_dots_added:
+		await tween.finished
+
+# Legacy toggle function (kept for backwards compatibility)
 func toggle_dot_selection(dot):
+	# If we're already in connection mode, ignore individual toggles
+	if not connected_dots.is_empty():
+		return
+		
 	var is_selected = dot.get_meta("selected")
 	
 	# If dot is already selected, deselect it
@@ -136,6 +432,4 @@ func toggle_dot_selection(dot):
 		dot.set_meta("selected", false)
 	# Otherwise, select it
 	else:
-		dot.scale = Vector2(SELECTION_SCALE, SELECTION_SCALE)  # Increase size by 10%
-		dot.modulate = GLOW_COLOR  # Add glow effect
-		dot.set_meta("selected", true) 
+		select_dot(dot) 
