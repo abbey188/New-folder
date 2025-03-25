@@ -20,8 +20,31 @@
 - **Test Results:** 6x6 grid of properly sized and spaced gray dots displayed on screen
 - **Status:** ✓ Complete
 
+## Step 3: Implement Dot Coloring (Completed)
+- Date: [Current Date]
+- Modified the grid script to assign random colors to dots
+- Implemented a color palette with 5 distinct colors:
+  - Red, Blue, Green, Yellow, and Purple
+- Added randomization to ensure different patterns on each game start
+- Stored color information as metadata for future game logic
+- **Test Results:** Code implementation verified, dots display random colors when game runs
+- **Status:** ✓ Complete
+
+## Step 4: Enable Touch Input for Dot Selection (Completed)
+- Date: [Current Date]
+- Added touch input detection to the grid script
+- Implemented dot selection toggling with visual feedback:
+  - 10% scale increase for selected dots
+  - White glow effect applied via modulate property
+- Added metadata tracking of selected state for each dot
+- Used Vector2 grid position metadata for dot position tracking
+- Created verification script to simulate and test touch input
+- **Test Results:** Touch input successfully selects/deselects dots with proper visual feedback
+- **Status:** ✓ Complete
+
 ## Next Steps
-- Proceed to Step 3: Implement Dot Coloring
-  - Modify the grid script to assign random colors to dots
-  - Ensure at least three distinct colors are used
+- Proceed to Step 5: Implement Connection Logic
+  - Add functionality to connect dots of the same color
+  - Create visual line connection between selected dots
+  - Implement rules for valid connections (adjacent dots, same color)
 

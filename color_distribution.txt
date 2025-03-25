@@ -1,0 +1,6 @@
+Color Distribution Check:
+Red used: true
+Blue used: true
+Green used: true
+Yellow used: true
+Purple used: true

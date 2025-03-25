@@ -17,6 +17,11 @@ func _ready():
 	print("Color Test Output:")
 	print("=================")
 	
+	# Also save to a file
+	var file = FileAccess.open("res://color_test_output.txt", FileAccess.WRITE)
+	file.store_line("Color Test Output:")
+	file.store_line("=================")
+	
 	var grid = []
 	for row in range(6):
 		var row_colors = []
@@ -36,7 +41,37 @@ func _ready():
 		
 		grid.append(row_colors)
 		print(row_str)
+		file.store_line(row_str)
 	
 	print("=================")
 	print("R = Red, B = Blue, G = Green, Y = Yellow, P = Purple")
-	print("Test complete. This confirms the random color generation is working.") 
+	print("Test complete. This confirms the random color generation is working.")
+	
+	file.store_line("=================")
+	file.store_line("R = Red, B = Blue, G = Green, Y = Yellow, P = Purple")
+	file.store_line("Test complete. This confirms the random color generation is working.")
+	file.close()
+	
+	# Also output a basic visualization to confirm we have all colors
+	var colors_used = [false, false, false, false, false]
+	for row_colors in grid:
+		for color in row_colors:
+			for i in range(DOT_COLORS.size()):
+				if color == DOT_COLORS[i]:
+					colors_used[i] = true
+	
+	print("\nColor Distribution Check:")
+	print("Red used: ", colors_used[0])
+	print("Blue used: ", colors_used[1])
+	print("Green used: ", colors_used[2])
+	print("Yellow used: ", colors_used[3])
+	print("Purple used: ", colors_used[4])
+	
+	file = FileAccess.open("res://color_distribution.txt", FileAccess.WRITE)
+	file.store_line("Color Distribution Check:")
+	file.store_line("Red used: " + str(colors_used[0]))
+	file.store_line("Blue used: " + str(colors_used[1]))
+	file.store_line("Green used: " + str(colors_used[2]))
+	file.store_line("Yellow used: " + str(colors_used[3]))
+	file.store_line("Purple used: " + str(colors_used[4]))
+	file.close() 

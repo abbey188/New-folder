@@ -1,0 +1,11 @@
+Color Test Output:
+=================
+Y P P Y P R 
+P R B G G R 
+B R P Y P P 
+P R P Y Y B 
+B R Y Y P Y 
+Y B G P P B 
+=================
+R = Red, B = Blue, G = Green, Y = Yellow, P = Purple
+Test complete. This confirms the random color generation is working.

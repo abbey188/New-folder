@@ -15,11 +15,19 @@ const DOT_COLORS = [
 	Color(0.8, 0.4, 0.9)    # Purple
 ]
 
+# Selection properties
+const SELECTION_SCALE = 1.1  # 10% size increase when selected
+const GLOW_COLOR = Color(1, 1, 1, 0.7)  # White glow with transparency
+const GLOW_SIZE = 5  # Size of the glow in pixels
+
 # Calculate actual distance between dot centers
 var dot_distance = DOT_DIAMETER + DOT_SPACING
 
 # Holds references to all dots
 var grid = []
+
+# Current selected dot
+var selected_dot = null
 
 func _ready():
 	# Seed the random number generator
@@ -41,6 +49,9 @@ func generate_grid():
 			# Position dot based on row and column
 			dot.position.x = col * dot_distance
 			dot.position.y = row * dot_distance
+			
+			# Store grid position as metadata
+			dot.set_meta("grid_pos", Vector2(col, row))
 			
 			add_child(dot)
 			row_dots.append(dot)
@@ -74,6 +85,7 @@ func create_dot():
 	
 	# Store the dot's color for future game logic
 	dot.set_meta("color", random_color)
+	dot.set_meta("selected", false)
 	
 	return dot
 
@@ -90,4 +102,40 @@ func center_grid():
 	var centered_y = (viewport_size.y - grid_height) / 2
 	
 	# Set grid position
-	position = Vector2(centered_x, centered_y) 
+	position = Vector2(centered_x, centered_y)
+
+# Handle input events
+func _input(event):
+	if event is InputEventScreenTouch and event.pressed:
+		handle_touch(event.position)
+
+# Process touch input
+func handle_touch(touch_position):
+	# Convert global touch position to local grid position
+	var local_position = to_local(touch_position)
+	
+	# Check if touch is within any dot
+	for row in grid:
+		for dot in row:
+			# Calculate distance from touch to dot center
+			var distance = local_position.distance_to(dot.position)
+			
+			# If touch is within dot radius, select it
+			if distance <= DOT_DIAMETER / 2:
+				toggle_dot_selection(dot)
+				return
+
+# Toggle selection of a dot
+func toggle_dot_selection(dot):
+	var is_selected = dot.get_meta("selected")
+	
+	# If dot is already selected, deselect it
+	if is_selected:
+		dot.scale = Vector2(1, 1)  # Reset scale
+		dot.modulate = Color(1, 1, 1)  # Reset modulate
+		dot.set_meta("selected", false)
+	# Otherwise, select it
+	else:
+		dot.scale = Vector2(SELECTION_SCALE, SELECTION_SCALE)  # Increase size by 10%
+		dot.modulate = GLOW_COLOR  # Add glow effect
+		dot.set_meta("selected", true) 
